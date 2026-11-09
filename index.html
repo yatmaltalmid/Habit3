@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מעקב הרגלים - Habit2</title>
+
+    <!-- הגדרות קטנות כדי שהאייפון יתייחס לזה כאפליקציה -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Habit2">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+        h1 {
+            color: #333;
+        }
+        .habit-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input {
+            padding: 8px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>מעקב ההרגלים שלי</h1>
+
+    <div style="margin-bottom: 20px;">
+        <input type="text" id="newHabitInput" placeholder="שם ההרגל החדש...">
+        <button onclick="addHabit()">הוסף הרגל</button>
+    </div>
+
+    <div id="habitsContainer"></div>
+
+    <script>
+        let habits = JSON.parse(localStorage.getItem('simple_habits')) || [
+            { name: 'שתיית מים', done: false },
+            { name: 'קריאה', done: false }
+        ];
+
+        function render() {
+            const container = document.getElementById('habitsContainer');
+            container.innerHTML = '';
+            
+            habits.forEach((habit, index) => {
+                const card = document.createElement('div');
+                card.className = 'habit-card';
+                card.innerHTML = `
+                    <span>${habit.name}</span>
+                    <button style="background-color: ${habit.done ? '#2196F3' : '#ccc'}" onclick="toggleHabit(${index})">
+                        ${habit.done ? 'בוצע! ✓' : 'סמן כבוצע'}
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addHabit() {
+            const input = document.getElementById('newHabitInput');
+            if (input.value.trim() !== '') {
+                habits.push({ name: input.value.trim(), done: false });
+                input.value = '';
+                saveAndRender();
+            }
+        }
+
+        function toggleHabit(index) {
+            habits[index].done = !habits[index].done;
+            saveAndRender();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('simple_habits', JSON.stringify(habits));
+            render();
+        }
+
+        render();
+    </script>
+
+</body>
+</html>
+
